@@ -125,3 +125,62 @@ describe('دفعات الاستيراد', () => {
     ).rejects.toThrow(/check constraint/);
   });
 });
+
+describe('المشكلات (0005)', () => {
+  const problem = (o: (typeof orgs)[number], extra: Record<string, unknown> = {}) => ({
+    organization_id: o.org,
+    store_id: o.store,
+    rule_id: 'Q01',
+    rule_version: '1',
+    signature: `${o.store}/Q01/1/store/rolling_30d`,
+    kind: 'quality',
+    score_impact: 2,
+    score_evidence: 3,
+    score_fit: 2,
+    score_feasibility: 2,
+    quality: 'complete',
+    title: 't',
+    observation: { text: 'x' },
+    action: 'a',
+    ...extra,
+  });
+
+  it('بطاقة مفتوحة واحدة لكل توقيع، والمحلولة تسمح ببطاقة جديدة', async () => {
+    const a = orgs[0]!;
+    await withTenant(db.app, a.org, async (tx) => {
+      await tx`INSERT INTO problems ${tx(problem(a))}`;
+    });
+    await expect(
+      withTenant(db.app, a.org, (tx) => tx`INSERT INTO problems ${tx(problem(a))}`),
+    ).rejects.toThrow(/problems_open_signature/);
+    await withTenant(db.app, a.org, async (tx) => {
+      await tx`UPDATE problems SET status = 'resolved', status_reason = 'أكملنا التكاليف'`;
+      await tx`INSERT INTO problems ${tx(problem(a))}`;
+    });
+  });
+
+  it('الرفض والتأجيل والحل تحتاج سببًا', async () => {
+    const a = orgs[0]!;
+    await expect(
+      withTenant(
+        db.app,
+        a.org,
+        (tx) => tx`UPDATE problems SET status = 'rejected' WHERE status = 'new'`,
+      ),
+    ).rejects.toThrow(/check constraint/);
+  });
+
+  it('مؤسسة أخرى لا ترى المشكلات، والسجل append-only', async () => {
+    const [a, b] = orgs as [(typeof orgs)[number], (typeof orgs)[number]];
+    const seen = await withTenant(db.app, b.org, (tx) => tx`SELECT id FROM problems`);
+    expect(seen).toHaveLength(0);
+    await withTenant(db.app, a.org, async (tx) => {
+      const [p] = await tx<{ id: string }[]>`SELECT id FROM problems LIMIT 1`;
+      await tx`INSERT INTO problem_events (organization_id, problem_id, kind, body)
+               VALUES (${a.org}, ${p!.id}, 'comment', 'ملاحظة')`;
+    });
+    await expect(
+      withTenant(db.app, a.org, (tx) => tx`UPDATE problem_events SET body = 'x'`),
+    ).rejects.toThrow(/permission denied|append-only/);
+  });
+});

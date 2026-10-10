@@ -13,6 +13,8 @@ import { ImportsService } from './imports/imports.service.js';
 import { OrgController } from './org/org.controller.js';
 import { OrgService } from './org/org.service.js';
 import { OverviewService } from './overview/overview.service.js';
+import { ProblemsController } from './problems/problems.controller.js';
+import { ProblemsService } from './problems/problems.service.js';
 import { CONFIG } from './tokens.js';
 
 const AUTH_POOL = Symbol('AUTH_POOL');
@@ -40,7 +42,7 @@ export class AppModule {
   static register(deps: AppDeps): DynamicModule {
     return {
       module: AppModule,
-      controllers: [HealthController, OrgController, ImportsController],
+      controllers: [HealthController, OrgController, ImportsController, ProblemsController],
       providers: [
         { provide: CONFIG, useValue: deps.config },
         { provide: MAILER, useValue: deps.mailer },
@@ -52,6 +54,7 @@ export class AppModule {
         OrgService,
         ImportsService,
         OverviewService,
+        ProblemsService,
         DbLifecycle,
       ],
     };

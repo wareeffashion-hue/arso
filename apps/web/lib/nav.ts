@@ -15,7 +15,7 @@ export const NAV: readonly NavItem[] = [
     href: '/opportunities',
     label: 'المشكلات والفرص',
     icon: 'M12 3l9 16H3zM12 10v4M12 17h.01',
-    available: false,
+    available: true,
   },
   {
     href: '/campaigns',

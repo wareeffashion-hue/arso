@@ -18,6 +18,7 @@ import type { AuthUser } from '../auth/session.guard.js';
 import { SQL, type Sql } from '../db.js';
 import { ApiError } from '../errors.js';
 import type { Membership, StoreAccess } from '../org/org.service.js';
+import { ProblemsService } from '../problems/problems.service.js';
 
 /** صلاحية كل نوع استيراد: الطلبات والإنفاق مصادر بيانات (مالك)، والتكاليف للمالية أيضًا */
 export const IMPORT_PERMISSION: Readonly<Record<ImportKind, Permission>> = {
@@ -64,7 +65,10 @@ function chunks<T>(list: readonly T[]): T[][] {
 
 @Injectable()
 export class ImportsService {
-  constructor(@Inject(SQL) private readonly sql: Sql) {}
+  constructor(
+    @Inject(SQL) private readonly sql: Sql,
+    private readonly problems: ProblemsService,
+  ) {}
 
   private validate(
     store: StoreAccess,
@@ -393,7 +397,7 @@ export class ImportsService {
   }
 
   async commit(m: Membership, user: AuthUser, store: StoreAccess, batchId: string, csv: string) {
-    return withTenant(this.sql, m.organizationId, async (tx) => {
+    const result = await withTenant(this.sql, m.organizationId, async (tx) => {
       const [batch] = await tx<
         {
           id: string;
@@ -455,6 +459,9 @@ export class ImportsService {
         counts: { ...counts, rejected: v.rejected.length },
       };
     });
+    // الفحص بعد الاعتماد خارج معاملة الكتابة؛ فشله لا يلغي الاستيراد
+    await this.problems.evaluateQuietly(m, store);
+    return result;
   }
 
   private async writeOrders(

@@ -20,6 +20,7 @@ export const config = {
     '/overview/:path*',
     '/data-health/:path*',
     '/imports/:path*',
+    '/opportunities/:path*',
     '/settings/:path*',
     '/onboarding',
   ],
