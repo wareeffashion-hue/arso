@@ -17,11 +17,16 @@ export interface TestDb {
 }
 
 const SETUP_LOCK = 4_242_001;
+/**
+ * كلمة مرور ثابتة لأدوار الاختبار. الأدوار على مستوى الخادم كله، فلو أخذ كل تشغيل كلمة
+ * عشوائية لغيّرها ملف اختبار على ملف آخر يعمل بالتوازي. قواعد الاختبار مؤقتة ومعزولة، والقيمة ليست سرًا.
+ */
+const TEST_ROLE_PASSWORD = 'arso-test-role';
 
 export async function createTestDb(adminUrl = process.env.TEST_DATABASE_URL): Promise<TestDb> {
   if (!adminUrl) throw new Error('TEST_DATABASE_URL غير مضبوط');
   const name = `arso_test_${randomBytes(6).toString('hex')}`;
-  const password = randomBytes(12).toString('hex');
+  const password = TEST_ROLE_PASSWORD;
   const url = new URL(adminUrl);
   url.pathname = `/${name}`;
 
@@ -31,7 +36,6 @@ export async function createTestDb(adminUrl = process.env.TEST_DATABASE_URL): Pr
     await root`SELECT pg_advisory_lock(${SETUP_LOCK})`;
     await root.unsafe(`CREATE DATABASE ${name}`);
     await migrate(admin);
-    // كلمة مرور عشوائية لكل تشغيل؛ الاسم والقيمة مولّدان هنا لا من مدخل خارجي
     await admin.unsafe(`ALTER ROLE arso_app LOGIN PASSWORD '${password}'`);
     await admin.unsafe(`ALTER ROLE arso_auth LOGIN PASSWORD '${password}'`);
   } finally {
