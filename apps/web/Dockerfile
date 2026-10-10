@@ -8,6 +8,9 @@ ENV API_INTERNAL_URL=$API_INTERNAL_URL NEXT_TELEMETRY_DISABLED=1
 COPY . .
 RUN pnpm install --frozen-lockfile
 RUN pnpm turbo run build --filter=@arso/web...
+# حارس: يفشل البناء إن لم تُكتب وجهة الوكيل الصحيحة في إعداد Next
+RUN grep -q "$API_INTERNAL_URL" apps/web/.next/routes-manifest.json \
+  || (echo "API_INTERNAL_URL لم يصل إلى بناء Next" && exit 1)
 
 FROM node:22.22-alpine
 ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 HOSTNAME=::
