@@ -489,3 +489,115 @@ tbody tr:last-child > * {
   color: var(--status-success);
   background: var(--status-success-bg);
 }
+
+/* ===== الإعدادات ===== */
+.btn-danger {
+  background: var(--status-danger);
+  color: var(--text-inverse);
+}
+.field select {
+  font: inherit;
+  min-height: 44px;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+}
+.field select:focus-visible,
+.check input:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 1px;
+}
+.settings-intro {
+  margin: 0 0 var(--space-4);
+  color: var(--text-secondary);
+  font-size: var(--fs-sm);
+}
+.settings-note {
+  margin: 0;
+  color: var(--text-secondary);
+}
+.settings-sub {
+  margin: var(--space-8) 0 var(--space-3);
+  font-size: var(--fs-lg);
+}
+.settings-form {
+  display: grid;
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+}
+.settings-form h3 {
+  margin: 0;
+  font-size: var(--fs-lg);
+}
+.settings-form > .btn {
+  justify-self: start;
+}
+.settings-fields {
+  display: grid;
+  gap: var(--space-4);
+}
+@media (min-width: 768px) {
+  .settings-fields {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+}
+.settings-fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+.settings-fieldset > legend {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  margin-bottom: var(--space-2);
+}
+.settings-member {
+  display: grid;
+  gap: 2px;
+}
+.settings-email {
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-regular);
+}
+.check-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-2);
+}
+.check-list > li {
+  padding: var(--space-3);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+.check {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 32px;
+  cursor: pointer;
+}
+.check input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--btn-primary-bg);
+}
+.check-sub {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: var(--space-1) var(--space-4);
+  margin: var(--space-2) 0 0;
+  padding: var(--space-2) var(--space-6) 0 0;
+  border: 0;
+  border-top: 1px dashed var(--border-subtle);
+}
+.check-sub > legend {
+  float: inline-start;
+  width: 100%;
+  padding-top: var(--space-2);
+}
