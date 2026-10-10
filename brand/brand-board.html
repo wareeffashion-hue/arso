@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>هوية أرسو</title>
+<link rel="stylesheet" href="tokens.css">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg-page); color: var(--text-primary); font-family: var(--font-sans); line-height: var(--lh-arabic); }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: var(--space-12) var(--space-6); }
+  h1, h2, h3 { font-family: var(--font-display); line-height: var(--lh-tight); margin: 0; }
+  h2 { font-size: var(--fs-2xl); font-weight: var(--fw-bold); margin-bottom: var(--space-2); }
+  h2::after { content: ""; display: block; width: 40px; height: 2px; background: var(--arso-gold); margin-top: var(--space-3); }
+  section { margin-top: var(--space-16); }
+  .lead { color: var(--text-secondary); max-width: 60ch; margin: var(--space-4) 0 var(--space-8); }
+  .grid { display: grid; gap: var(--space-4); }
+  .g4 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .g7 { grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); }
+  .card { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: var(--space-6); box-shadow: var(--shadow-1); }
+
+  /* Hero */
+  .hero { background: var(--bg-inverse); color: var(--arso-white); border-radius: var(--radius-xl); padding: var(--space-16) var(--space-12); position: relative; overflow: hidden; }
+  .hero img { height: 150px; }
+  .hero .tag { font-size: var(--fs-3xl); font-weight: var(--fw-light); margin-top: var(--space-8); }
+  .hero .sub { color: var(--arso-silver); margin-top: var(--space-2); }
+  .hero .sub span { color: var(--arso-gold); padding: 0 6px; }
+  .waves { position: absolute; inset-inline-end: -40px; bottom: -20px; width: 520px; opacity: .55; }
+
+  /* Swatches */
+  .sw { border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border-subtle); background: var(--bg-surface); }
+  .sw .chip { height: 110px; }
+  .sw .meta { padding: var(--space-3) var(--space-4); font-size: var(--fs-sm); }
+  .sw .meta b { display: block; font-weight: var(--fw-medium); }
+  .sw .meta code, code { font-family: var(--font-num); direction: ltr; unicode-bidi: isolate; color: var(--text-secondary); font-size: var(--fs-xs); }
+  .ramp { display: flex; border-radius: var(--radius-md); overflow: hidden; height: 56px; margin-top: var(--space-3); }
+  .ramp div { flex: 1; display: flex; align-items: end; justify-content: center; font-size: 10px; padding-bottom: 4px; font-family: var(--font-num); }
+
+  /* Type */
+  .type-row { display: grid; grid-template-columns: 140px 1fr; gap: var(--space-4); align-items: baseline; padding: var(--space-4) 0; border-bottom: 1px solid var(--border-subtle); }
+  .type-row small { color: var(--text-muted); font-size: var(--fs-xs); }
+
+  /* Product sample */
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--space-4); }
+  .kpi .label { color: var(--text-secondary); font-size: var(--fs-sm); display: flex; justify-content: space-between; align-items: center; gap: var(--space-2); }
+  .kpi .value { font-family: var(--font-num); font-variant-numeric: tabular-nums; font-size: var(--fs-2xl); font-weight: var(--fw-medium); margin-top: var(--space-2); display: flex; align-items: center; gap: 6px; direction: rtl; }
+  .kpi .value .n { direction: ltr; unicode-bidi: isolate; }
+  .kpi .delta { font-size: var(--fs-xs); margin-top: var(--space-1); }
+  .riyal { width: .8em; height: .8em; display: inline-block; vertical-align: -0.05em; }
+  .badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; padding: 2px 8px; border-radius: var(--radius-full); font-weight: var(--fw-medium); white-space: nowrap; }
+  .b-ok { color: var(--status-success); background: var(--status-success-bg); }
+  .b-part { color: var(--status-warning); background: var(--status-warning-bg); }
+  .b-miss { color: var(--text-muted); background: var(--bg-sunken); }
+  .b-stale { color: var(--status-info); background: var(--status-info-bg); }
+  .missing { color: var(--text-muted); font-size: var(--fs-lg) !important; }
+
+  .opp { display: grid; grid-template-columns: 4px 1fr; gap: var(--space-4); }
+  .opp .bar { background: var(--arso-gold); border-radius: 4px; }
+  .opp h3 { font-size: var(--fs-lg); font-weight: var(--fw-medium); }
+  .opp .facts { margin-top: var(--space-2); font-size: var(--fs-sm); color: var(--text-secondary); }
+  .opp .facts b { color: var(--text-primary); font-weight: var(--fw-medium); }
+  .btns { display: flex; gap: var(--space-3); flex-wrap: wrap; margin-top: var(--space-4); }
+  .btn { font-family: var(--font-sans); font-size: var(--fs-sm); font-weight: var(--fw-medium); padding: 10px 18px; border-radius: var(--radius-md); border: 1px solid transparent; cursor: pointer; }
+  .btn-p { background: var(--btn-primary-bg); color: var(--btn-primary-text); }
+  .btn-a { background: var(--btn-accent-bg); color: var(--btn-accent-text); }
+  .btn-g { background: transparent; color: var(--text-primary); border-color: var(--border-default); }
+
+  /* Chart */
+  .chart { display: flex; align-items: end; gap: 3px; height: 160px; padding-top: var(--space-4); border-bottom: 1px solid var(--chart-baseline); }
+  .chart .grp { flex: 1; display: flex; flex-direction: column-reverse; gap: 2px; }
+  .chart .seg { border-radius: 2px; }
+  .chart .grp .seg:last-child { border-radius: 4px 4px 2px 2px; }
+  .legend { display: flex; flex-wrap: wrap; gap: var(--space-4); margin-top: var(--space-4); font-size: var(--fs-sm); color: var(--text-secondary); }
+  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-inline-end: 6px; vertical-align: middle; }
+
+  .dark-demo { border-radius: var(--radius-xl); padding: var(--space-8); }
+  footer { margin-top: var(--space-16); color: var(--text-muted); font-size: var(--fs-sm); text-align: center; }
+  @media (max-width: 600px) { .hero { padding: var(--space-10) var(--space-6); } .hero img { height: 100px; } .hero .tag { font-size: var(--fs-2xl); } .type-row { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <svg class="waves" viewBox="0 0 520 220" fill="none" aria-hidden="true">
+      <g stroke="#BFC3C8" stroke-width="1" opacity=".45">
+        <path d="M0 200 C120 200 160 60 280 60 S440 120 520 40"/><path d="M0 210 C120 210 165 75 285 75 S440 135 520 55"/>
+        <path d="M0 220 C120 220 170 90 290 90 S440 150 520 70"/>
+      </g>
+      <path d="M0 190 C120 190 155 45 275 45 S440 105 520 25" stroke="#C6A76A" stroke-width="1.2"/>
+    </svg>
+    <img src="logo/ARSO_Logo_Dark.svg" alt="أرسو ARSO">
+    <div class="tag">نرسي نمو متجرك</div>
+    <div class="sub">تصميم<span>•</span>تقنية<span>•</span>تسويق</div>
+  </div>
+
+  <section>
+    <h2>ألوان الهوية</h2>
+    <p class="lead">أربعة ألوان فقط. الأسود والورق الدافئ يحملان الواجهة، والذهبي لمسة تميّز لا تتجاوز 10٪ من المساحة.</p>
+    <div class="grid g4">
+      <div class="sw"><div class="chip" style="background:#111111"></div><div class="meta"><b>أسود أرسو</b><code>#111111</code></div></div>
+      <div class="sw"><div class="chip" style="background:#F7F6F2;border-bottom:1px solid var(--border-subtle)"></div><div class="meta"><b>ورق دافئ</b><code>#F7F6F2 · #FFFFFF</code></div></div>
+      <div class="sw"><div class="chip" style="background:#BFC3C8"></div><div class="meta"><b>فضي</b><code>#BFC3C8</code></div></div>
+      <div class="sw"><div class="chip" style="background:#C6A76A"></div><div class="meta"><b>ذهبي</b><code>#C6A76A</code></div></div>
+    </div>
+    <div class="card" style="margin-top:var(--space-4)">
+      <b>سلّم الذهب</b> <small style="color:var(--text-muted)">· للنص على الفاتح: 600 فأغمق فقط</small>
+      <div class="ramp">
+        <div style="background:#F4EBD8">100</div><div style="background:#E8D6B0">200</div><div style="background:#D9BF88">300</div><div style="background:#C6A76A">400</div>
+        <div style="background:#A8874A;color:#fff">500</div><div style="background:#8A6B32;color:#fff">600</div><div style="background:#6E5426;color:#fff">700</div><div style="background:#4F3C1B;color:#fff">800</div>
+      </div>
+      <b style="display:block;margin-top:var(--space-6)">سلّم الحبر</b>
+      <div class="ramp">
+        <div style="background:#F5F4F0">50</div><div style="background:#ECECEA">100</div><div style="background:#DCDDE0">200</div><div style="background:#A1A1A8">300</div><div style="background:#6E6E75;color:#fff">400</div>
+        <div style="background:#55555B;color:#fff">500</div><div style="background:#3F3F44;color:#fff">600</div><div style="background:#2A2A2D;color:#fff">700</div><div style="background:#1C1C1E;color:#fff">800</div><div style="background:#111111;color:#fff">900</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>ألوان الحالة وجودة البيانات</h2>
+    <p class="lead">محجوزة للحالة فقط، ودائمًا مع أيقونة ونص. الغياب ليس صفرًا: لكل رقم شارة تقول مدى اكتماله.</p>
+    <div class="card" style="display:flex;gap:var(--space-3);flex-wrap:wrap">
+      <span class="badge b-ok">✓ مكتمل</span>
+      <span class="badge b-part">◐ جزئي</span>
+      <span class="badge b-miss">○ غير متوفر</span>
+      <span class="badge b-stale">↻ متأخر</span>
+      <span class="badge" style="color:var(--status-danger);background:var(--status-danger-bg)">! خطأ</span>
+    </div>
+  </section>
+
+  <section>
+    <h2>الخطوط</h2>
+    <p class="lead">جميلة للعربية، وManrope للحروف اللاتينية والأرقام بعرض ثابت يجعل أعمدة الجداول متراصفة.</p>
+    <div class="card">
+      <div class="type-row"><small>رقم رئيسي · 48</small><div style="font-size:var(--fs-hero);font-weight:500" class="num">128,450.00</div></div>
+      <div class="type-row"><small>عنوان صفحة · 28 Bold</small><div style="font-size:var(--fs-2xl);font-weight:700;font-family:var(--font-display)">المشكلات والفرص</div></div>
+      <div class="type-row"><small>عنوان قسم · 22 Medium</small><div style="font-size:var(--fs-xl);font-weight:500;font-family:var(--font-display)">الحملات ومراقبة الأداء</div></div>
+      <div class="type-row"><small>نص أساسي · 16</small><div>انخفضت المساهمة بعد التسويق في حملة Snap «عيد الأم» بسبب ارتفاع نسبة الاسترجاع للمقاس M، وليس بسبب الإنفاق.</div></div>
+      <div class="type-row"><small>عنوان تسويقي · Light</small><div style="font-size:var(--fs-3xl);font-weight:300;font-family:var(--font-display)">من الفكرة إلى الأثر</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>الهوية داخل المنتج</h2>
+    <p class="lead">بطاقات المقاييس كما ستظهر في لوحة أرسو: الرقم أولًا، ومعه مصدره وجودته. والرقم الناقص يظهر ناقصًا.</p>
+    <div class="kpis">
+      <div class="card kpi">
+        <div class="label">صافي مبيعات المنتجات <span class="badge b-ok">✓ مكتمل</span></div>
+        <div class="value"><span class="n">84,320.50</span><img class="riyal" src="icons/riyal.svg" alt="ريال"></div>
+        <div class="delta" style="color:var(--status-success)">▲ 12.4٪ عن الفترة السابقة</div>
+      </div>
+      <div class="card kpi">
+        <div class="label">الإنفاق الإعلاني <span class="badge b-stale">↻ قبل 3 ساعات</span></div>
+        <div class="value"><span class="n">21,075.00</span><img class="riyal" src="icons/riyal.svg" alt="ريال"></div>
+        <div class="delta" style="color:var(--text-muted)">سناب · آخر مزامنة 09:12</div>
+      </div>
+      <div class="card kpi">
+        <div class="label">المساهمة بعد التسويق <span class="badge b-part">◐ جزئي</span></div>
+        <div class="value missing">الربحية غير مكتملة</div>
+        <div class="delta" style="color:var(--status-warning)">تكلفة 8 بنود مفقودة · تغطية 82٪</div>
+      </div>
+      <div class="card kpi">
+        <div class="label">طلبات مؤهلة <span class="badge b-ok">✓ مكتمل</span></div>
+        <div class="value"><span class="n">1,284</span></div>
+        <div class="delta" style="color:var(--status-danger)">▼ 3.1٪ عن الفترة السابقة</div>
+      </div>
+    </div>
+
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(320px,1fr));margin-top:var(--space-4)">
+      <div class="card opp">
+        <div class="bar"></div>
+        <div>
+          <span class="badge b-part">أولوية عالية · 8/10</span>
+          <h3 style="margin-top:var(--space-2)">حملة تقود إلى مقاس نفد</h3>
+          <div class="facts"><b>الحقيقة:</b> 41٪ من زيارات حملة «فستان سهرة» تصل إلى متغير M الذي نفد منذ 3 أيام.</div>
+          <div class="facts"><b>الفرضية:</b> قد يفسر هذا انخفاض التحويل 18٪ في الحملة نفسها.</div>
+          <div class="btns"><button class="btn btn-p">حوّل إلى مهمة</button><button class="btn btn-g">عرض الدليل</button></div>
+        </div>
+      </div>
+      <div class="card">
+        <b>الإنفاق حسب المنصة</b> <small style="color:var(--text-muted)">· آخر 8 أسابيع</small>
+        <div class="chart" role="img" aria-label="رسم توضيحي للإنفاق الأسبوعي حسب المنصة">
+          <div class="grp"><div class="seg" style="height:40px;background:var(--series-1)"></div><div class="seg" style="height:26px;background:var(--series-2)"></div><div class="seg" style="height:14px;background:var(--series-3)"></div></div>
+          <div class="grp"><div class="seg" style="height:46px;background:var(--series-1)"></div><div class="seg" style="height:24px;background:var(--series-2)"></div><div class="seg" style="height:18px;background:var(--series-3)"></div></div>
+          <div class="grp"><div class="seg" style="height:52px;background:var(--series-1)"></div><div class="seg" style="height:30px;background:var(--series-2)"></div><div class="seg" style="height:16px;background:var(--series-3)"></div></div>
+          <div class="grp"><div class="seg" style="height:44px;background:var(--series-1)"></div><div class="seg" style="height:34px;background:var(--series-2)"></div><div class="seg" style="height:22px;background:var(--series-3)"></div></div>
+          <div class="grp"><div class="seg" style="height:58px;background:var(--series-1)"></div><div class="seg" style="height:30px;background:var(--series-2)"></div><div class="seg" style="height:20px;background:var(--series-3)"></div></div>
+          <div class="grp"><div class="seg" style="height:62px;background:var(--series-1)"></div><div class="seg" style="height:36px;background:var(--series-2)"></div><div class="seg" style="height:26px;background:var(--series-3)"></div></div>
+          <div class="grp"><div class="seg" style="height:56px;background:var(--series-1)"></div><div class="seg" style="height:40px;background:var(--series-2)"></div><div class="seg" style="height:24px;background:var(--series-3)"></div></div>
+          <div class="grp"><div class="seg" style="height:66px;background:var(--series-1)"></div><div class="seg" style="height:42px;background:var(--series-2)"></div><div class="seg" style="height:30px;background:var(--series-3)"></div></div>
+        </div>
+        <div class="legend"><span><i style="background:var(--series-1)"></i>سناب</span><span><i style="background:var(--series-2)"></i>ميتا</span><span><i style="background:var(--series-3)"></i>تيك توك</span></div>
+      </div>
+    </div>
+    <div class="btns"><button class="btn btn-p">ابدأ تشخيص متجرك</button><button class="btn btn-a">اطلب عرضًا</button><button class="btn btn-g">كيف يعمل</button></div>
+  </section>
+
+  <section>
+    <h2>ألوان الرسوم البيانية</h2>
+    <p class="lead">سبعة ألوان بترتيب ثابت، فُحصت آليًا لعمى الألوان والتباين في الوضعين. اللون يتبع الكيان: سناب أزرق في كل الشاشات.</p>
+    <div class="grid g7">
+      <div class="sw"><div class="chip" style="background:#2F5FA8;height:64px"></div><div class="meta"><b>1</b><code>#2F5FA8</code></div></div>
+      <div class="sw"><div class="chip" style="background:#C08A2E;height:64px"></div><div class="meta"><b>2</b><code>#C08A2E</code></div></div>
+      <div class="sw"><div class="chip" style="background:#008F78;height:64px"></div><div class="meta"><b>3</b><code>#008F78</code></div></div>
+      <div class="sw"><div class="chip" style="background:#C2553D;height:64px"></div><div class="meta"><b>4</b><code>#C2553D</code></div></div>
+      <div class="sw"><div class="chip" style="background:#8A5BB0;height:64px"></div><div class="meta"><b>5</b><code>#8A5BB0</code></div></div>
+      <div class="sw"><div class="chip" style="background:#5E8F2E;height:64px"></div><div class="meta"><b>6</b><code>#5E8F2E</code></div></div>
+      <div class="sw"><div class="chip" style="background:#D07A9C;height:64px"></div><div class="meta"><b>7</b><code>#D07A9C</code></div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>الوضع الداكن</h2>
+    <p class="lead">مستوحى من الظرف الأسود بالفضي والذهبي، بألوان مفحوصة مستقلة وليس قلبًا آليًا للألوان.</p>
+    <div class="dark-demo" data-theme="dark" style="background:#0E0E0F;color:#F5F4F0">
+      <div class="kpis">
+        <div class="kpi" style="background:#18181A;border:1px solid #26262A;border-radius:16px;padding:24px">
+          <div class="label" style="color:#C9C9CE">صافي مبيعات المنتجات <span class="badge" style="color:#5FBF8E;background:rgba(95,191,142,.12)">✓ مكتمل</span></div>
+          <div class="value"><span class="n">84,320.50</span><img class="riyal" src="icons/riyal.svg" alt="ريال" style="filter:invert(1)"></div>
+          <div class="delta" style="color:#5FBF8E">▲ 12.4٪</div>
+        </div>
+        <div class="kpi" style="background:#18181A;border:1px solid #26262A;border-radius:16px;padding:24px">
+          <div class="label" style="color:#C9C9CE">المساهمة بعد التسويق <span class="badge" style="color:#E3A24A;background:rgba(227,162,74,.12)">◐ جزئي</span></div>
+          <div class="value" style="color:#A1A1A8;font-size:18px">الربحية غير مكتملة</div>
+          <div class="delta" style="color:#D4BA82">أكمل تكاليف 8 منتجات ←</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:16px;margin-top:24px">
+        <img src="logo/ARSO_Symbol_White.svg" alt="" style="height:40px">
+        <span style="color:#BFC3C8">من الفكرة إلى الأثر</span>
+      </div>
+    </div>
+  </section>
+
+  <footer>أرسو · دليل الهوية 1.0 · الأرقام في هذه اللوحة توضيحية</footer>
+</div>
+</body>
+</html>
