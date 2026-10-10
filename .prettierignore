@@ -6,3 +6,4 @@ brand/
 dist/
 docs/**/*.md
 *.md
+next-env.d.ts

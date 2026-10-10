@@ -8,3 +8,4 @@ export {
   type ContributionResult,
   type CostCoverage,
 } from './contribution.js';
+export * from './permissions.js';
