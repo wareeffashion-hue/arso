@@ -9,6 +9,8 @@ export interface KpiCardProps {
   quality: Quality;
   money?: boolean;
   fractionDigits?: number;
+  /** لاحقة بعد الرقم مثل ٪ */
+  suffix?: string;
   /** سبب غياب القيمة أو حدودها، يظهر تحت الرقم */
   note?: string;
 }
@@ -22,10 +24,11 @@ export function KpiCard({
   value,
   quality,
   money = false,
-  fractionDigits = 2,
+  fractionDigits,
+  suffix,
   note,
 }: KpiCardProps) {
-  const formatted = formatDecimal(value, money ? fractionDigits : 0);
+  const formatted = formatDecimal(value, fractionDigits ?? (money ? 2 : 0));
   return (
     <article className="card kpi" aria-label={label}>
       <header className="kpi-label">
@@ -37,6 +40,7 @@ export function KpiCard({
       ) : (
         <p className="kpi-value">
           <span className="num">{formatted}</span>
+          {suffix ? <span className="kpi-suffix">{suffix}</span> : null}
           {money ? <Riyal /> : null}
         </p>
       )}

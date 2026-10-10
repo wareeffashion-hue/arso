@@ -521,7 +521,7 @@ function TeamSection({
                   <td>{roleLabel(inv.role)}</td>
                   <td>{storeNames(inv.storeIds, stores)}</td>
                   <td>
-                    <span className="num">{formatDateTime(inv.expiresAt)}</span>
+                    <span className="nowrap">{formatDateTime(inv.expiresAt)}</span>
                   </td>
                   <td>
                     <button

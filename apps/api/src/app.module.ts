@@ -8,8 +8,11 @@ import { createClient, SQL, type Sql } from './db.js';
 import { ErrorFilter } from './errors.js';
 import { HealthController } from './health.controller.js';
 import { MAILER, type Mailer } from './mail/mailer.js';
+import { ImportsController } from './imports/imports.controller.js';
+import { ImportsService } from './imports/imports.service.js';
 import { OrgController } from './org/org.controller.js';
 import { OrgService } from './org/org.service.js';
+import { OverviewService } from './overview/overview.service.js';
 import { CONFIG } from './tokens.js';
 
 const AUTH_POOL = Symbol('AUTH_POOL');
@@ -37,7 +40,7 @@ export class AppModule {
   static register(deps: AppDeps): DynamicModule {
     return {
       module: AppModule,
-      controllers: [HealthController, OrgController],
+      controllers: [HealthController, OrgController, ImportsController],
       providers: [
         { provide: CONFIG, useValue: deps.config },
         { provide: MAILER, useValue: deps.mailer },
@@ -47,6 +50,8 @@ export class AppModule {
         { provide: APP_FILTER, useClass: ErrorFilter },
         SessionGuard,
         OrgService,
+        ImportsService,
+        OverviewService,
         DbLifecycle,
       ],
     };

@@ -37,6 +37,11 @@ export async function createApp(config: AppConfig, opts: CreateAppOptions = {}) 
   app.set('trust proxy', 1);
   app.use(requestId);
   app.use('/api/auth', toNodeHandler(auth));
+  // ملفات الاستيراد حتى 20MiB نصًا، وقد يكبر الترميز في JSON؛ بقية المسارات 100kb
+  app.use(
+    /^\/api\/v1\/organizations\/[^/]+\/stores\/[^/]+\/imports/,
+    express.json({ limit: '45mb' }),
+  );
   app.use(express.json({ limit: '100kb' }));
   app.setGlobalPrefix('api/v1', { exclude: ['health', 'health/ready'] });
   app.enableShutdownHooks();
