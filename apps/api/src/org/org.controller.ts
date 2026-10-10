@@ -78,6 +78,23 @@ export class OrgController {
     return this.orgs.invite(m, me(req), parseBody(Invite, body));
   }
 
+  @Get('organizations/:org/invitations')
+  async listInvitations(@Req() req: AuthedRequest, @Param('org') org: string) {
+    const m = await this.orgs.requireMembership(parseId(org), me(req).id);
+    return { items: await this.orgs.listInvitations(m) };
+  }
+
+  @Post('organizations/:org/invitations/:invitation/revoke')
+  @HttpCode(200)
+  async revokeInvitation(
+    @Req() req: AuthedRequest,
+    @Param('org') org: string,
+    @Param('invitation') invitation: string,
+  ) {
+    const m = await this.orgs.requireMembership(parseId(org), me(req).id);
+    return this.orgs.revokeInvitation(m, parseId(invitation));
+  }
+
   @Post('invitations/accept')
   @HttpCode(200)
   accept(@Req() req: AuthedRequest, @Body() body: unknown) {

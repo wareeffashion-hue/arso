@@ -1,8 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import {
   effectivePermissions,
+  grantablePermissions,
   organizationPermissions,
   PERMISSIONS,
+  roleDefaults,
+  ROLES,
   type StoreGrant,
 } from '../src/index.js';
 
@@ -103,5 +106,21 @@ describe('الصلاحيات (القسم 9)', () => {
       now,
     );
     expect([...p]).toEqual(['metrics.read']);
+  });
+});
+
+describe('ما يمكن منحه لكل دور', () => {
+  it('لا يتضمن إدارة الفريق أو الربط ولا افتراضيات الدور', () => {
+    for (const role of ROLES) {
+      const g = grantablePermissions(role);
+      expect(g).not.toContain('members.manage');
+      expect(g).not.toContain('connections.manage');
+      for (const p of roleDefaults(role)) expect(g).not.toContain(p);
+    }
+  });
+
+  it('المالك لا يُمنح شيئًا، والمحلل يمكن منحه ملخص المساهمة', () => {
+    expect(grantablePermissions('owner')).toEqual([]);
+    expect(grantablePermissions('analyst')).toContain('finance.read_summary');
   });
 });

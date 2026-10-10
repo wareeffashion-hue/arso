@@ -113,3 +113,13 @@ export function organizationPermissions(membership: MembershipContext): Readonly
 export function roleDefaults(role: Role): readonly Permission[] {
   return ROLE_DEFAULTS[role];
 }
+
+/**
+ * ما يمكن للمالك إضافته بمنحة لعضو بهذا الدور: كل صلاحية خارج افتراضيات الدور
+ * وخارج ما يخص المالك وحده. للمالك نفسه لا شيء، فصلاحياته كاملة وثابتة.
+ */
+export function grantablePermissions(role: Role): readonly Permission[] {
+  if (role === 'owner') return [];
+  const defaults = new Set(ROLE_DEFAULTS[role]);
+  return PERMISSIONS.filter((p) => !defaults.has(p) && !OWNER_ONLY.has(p));
+}

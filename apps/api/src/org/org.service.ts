@@ -120,14 +120,59 @@ export class OrgService {
     });
   }
 
+  /** الأعضاء مع منحهم السارية، ليعرف المالك من يرى ماذا قبل أن يعدّل */
   async listMembers(m: Membership) {
     this.requireOrgPermission(m, 'members.manage');
-    return withTenant(
+    return withTenant(this.sql, m.organizationId, async (tx) => {
+      const members = await tx<
+        { id: string; email: string; name: string; role: string; status: string }[]
+      >`SELECT membership_id AS id, email, name, role, status FROM current_org_members()`;
+      const grants = await tx<{ membership_id: string; store_id: string; permissions: string[] }[]>`
+        SELECT membership_id, store_id, permissions FROM store_grants
+        WHERE revoked_at IS NULL AND (expires_at IS NULL OR expires_at > now())
+        ORDER BY created_at`;
+      return members.map((mem) => ({
+        ...mem,
+        grants: grants
+          .filter((g) => g.membership_id === mem.id)
+          .map((g) => ({ storeId: g.store_id, permissions: g.permissions })),
+      }));
+    });
+  }
+
+  /** الدعوات المعلّقة فقط: لم تُقبل ولم تُلغَ ولم تنتهِ. لا تجزئة رمز في الرد */
+  async listInvitations(m: Membership) {
+    this.requireOrgPermission(m, 'members.manage');
+    const rows = await withTenant(
       this.sql,
       m.organizationId,
-      (tx) => tx`
-      SELECT membership_id AS id, email, name, role, status FROM current_org_members()`,
+      (tx) => tx<
+        { id: string; email: string; role: string; store_ids: string[]; expires_at: Date }[]
+      >`SELECT id, email, role, store_ids, expires_at FROM invitations
+        WHERE accepted_at IS NULL AND revoked_at IS NULL AND expires_at > now()
+        ORDER BY created_at DESC`,
     );
+    return rows.map((r) => ({
+      id: r.id,
+      email: r.email,
+      role: r.role,
+      storeIds: r.store_ids,
+      expiresAt: r.expires_at.toISOString(),
+    }));
+  }
+
+  /** إلغاء دعوة معلّقة: الرابط المرسل يصبح غير صالح فورًا */
+  async revokeInvitation(m: Membership, invitationId: string) {
+    this.requireOrgPermission(m, 'members.manage');
+    return withTenant(this.sql, m.organizationId, async (tx) => {
+      const [inv] = await tx<{ id: string }[]>`
+        UPDATE invitations SET revoked_at = now()
+        WHERE id = ${invitationId} AND accepted_at IS NULL AND revoked_at IS NULL
+        RETURNING id`;
+      if (!inv) throw notFound();
+      await this.audit(tx, m, 'invitation.revoke', 'invitation', inv.id, null, null);
+      return { id: inv.id, status: 'revoked' as const };
+    });
   }
 
   /**

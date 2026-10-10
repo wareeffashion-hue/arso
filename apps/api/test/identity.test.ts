@@ -235,3 +235,71 @@ describe('الدعوات والمنح والسحب', () => {
     expect(me.body.organizations).toEqual([]);
   });
 });
+
+describe('إدارة الفريق من الإعدادات', () => {
+  it('قائمة الأعضاء تحمل المنح السارية لكل عضو', async () => {
+    await owner
+      .post(`/api/v1/organizations/${orgId}/invitations`)
+      .send({ email: 'finance@arso.sa', role: 'finance', storeIds: [storeA] })
+      .expect(201);
+    const token = linkFrom(t, 'finance@arso.sa').searchParams.get('token')!;
+    const finance = await signUpVerified(t, 'finance@arso.sa');
+    await finance.post('/api/v1/invitations/accept').send({ token }).expect(200);
+
+    const r = await owner.get(`/api/v1/organizations/${orgId}/members`).expect(200);
+    const fin = r.body.items.find((m: { email: string }) => m.email === 'finance@arso.sa');
+    expect(fin.grants).toEqual([{ storeId: storeA, permissions: [] }]);
+    const own = r.body.items.find((m: { role: string }) => m.role === 'owner');
+    expect(own.grants).toEqual([]);
+  });
+
+  it('الدعوات المعلّقة تظهر للمالك بلا رمز ولا تجزئة', async () => {
+    await owner
+      .post(`/api/v1/organizations/${orgId}/invitations`)
+      .send({ email: 'designer@arso.sa', role: 'creative', storeIds: [storeB] })
+      .expect(201);
+    const r = await owner.get(`/api/v1/organizations/${orgId}/invitations`).expect(200);
+    expect(r.body.items).toEqual([
+      expect.objectContaining({ email: 'designer@arso.sa', role: 'creative', storeIds: [storeB] }),
+    ]);
+    expect(JSON.stringify(r.body)).not.toMatch(/token|hash/i);
+  });
+
+  it('غير المالك لا يرى الدعوات ولا يلغيها', async () => {
+    const outsider = await signUpVerified(t, 'outsider@arso.sa');
+    await outsider.get(`/api/v1/organizations/${orgId}/invitations`).expect(404);
+  });
+
+  it('إلغاء الدعوة يبطل رابطها فورًا، ولا تُلغى مرتين', async () => {
+    const token = linkFrom(t, 'designer@arso.sa').searchParams.get('token')!;
+    const list = await owner.get(`/api/v1/organizations/${orgId}/invitations`).expect(200);
+    const id = list.body.items[0].id;
+    await owner.post(`/api/v1/organizations/${orgId}/invitations/${id}/revoke`).expect(200);
+    await owner.post(`/api/v1/organizations/${orgId}/invitations/${id}/revoke`).expect(404);
+
+    const designer = await signUpVerified(t, 'designer@arso.sa');
+    await designer.post('/api/v1/invitations/accept').send({ token }).expect(404);
+    const after = await owner.get(`/api/v1/organizations/${orgId}/invitations`).expect(200);
+    expect(after.body.items).toEqual([]);
+
+    const [audit] = await t.db.admin`
+      SELECT target_id FROM audit_logs WHERE action = 'invitation.revoke' ORDER BY id DESC LIMIT 1`;
+    expect(audit!.target_id).toBe(id);
+  });
+
+  it('لا يُلغي المالك دعوة مؤسسة أخرى', async () => {
+    const other = await signUpVerified(t, 'fourth-owner@arso.sa');
+    const otherOrg = (
+      await other.post('/api/v1/organizations').send({ name: 'Fourth Org' }).expect(201)
+    ).body.id;
+    await other
+      .post(`/api/v1/organizations/${otherOrg}/invitations`)
+      .send({ email: 'z@arso.sa', role: 'analyst' })
+      .expect(201);
+    const theirs = (await other.get(`/api/v1/organizations/${otherOrg}/invitations`).expect(200))
+      .body.items[0].id;
+    await owner.post(`/api/v1/organizations/${orgId}/invitations/${theirs}/revoke`).expect(404);
+    const still = await other.get(`/api/v1/organizations/${otherOrg}/invitations`).expect(200);
+    expect(still.body.items).toHaveLength(1);
+  });
+});
