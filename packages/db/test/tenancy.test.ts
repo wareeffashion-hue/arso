@@ -1,22 +1,23 @@
 import { randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { withTenant, TenantContextError } from '../src/index.js';
-import { createTestDb, type TestDb } from './setup.js';
+import { createOrganization, createTestDb, createVerifiedUser, type TestDb } from './setup.js';
 
 let db: TestDb;
-const orgA = randomUUID();
-const orgB = randomUUID();
+let orgA = '';
+let orgB = '';
 let storeA = '';
 let storeB = '';
 
-async function seedOrg(org: string, name: string): Promise<string> {
-  return withTenant(db.app, org, async (tx) => {
-    await tx`INSERT INTO organizations (id, name) VALUES (${org}, ${name})`;
-    const [s] = await tx<
-      { id: string }[]
-    >`INSERT INTO stores (organization_id, name) VALUES (${org}, ${name + ' store'}) RETURNING id`;
+async function seedOrg(name: string): Promise<[string, string]> {
+  const owner = await createVerifiedUser(db, `${randomUUID()}@owner.sa`);
+  const org = await createOrganization(db, name, owner);
+  const store = await withTenant(db.app, org, async (tx) => {
+    const [s] = await tx<{ id: string }[]>`
+      INSERT INTO stores (organization_id, name) VALUES (${org}, ${name + ' store'}) RETURNING id`;
     return s!.id;
   });
+  return [org, store];
 }
 
 function entry(org: string, store: string, overrides: Record<string, unknown> = {}) {
@@ -38,8 +39,8 @@ function entry(org: string, store: string, overrides: Record<string, unknown> = 
 
 beforeAll(async () => {
   db = await createTestDb();
-  storeA = await seedOrg(orgA, 'Org A');
-  storeB = await seedOrg(orgB, 'Org B');
+  [orgA, storeA] = await seedOrg('Org A');
+  [orgB, storeB] = await seedOrg('Org B');
 });
 afterAll(async () => db?.drop());
 

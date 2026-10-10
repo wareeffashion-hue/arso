@@ -5,7 +5,8 @@
     "rootDir": ".",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "exactOptionalPropertyTypes": false
+    "exactOptionalPropertyTypes": false,
+    "declaration": false
   },
   "include": ["src", "test"]
 }

@@ -5,6 +5,14 @@ const config: NextConfig = {
   poweredByHeader: false,
   output: 'standalone',
   transpilePackages: ['@arso/domain'],
+  // الـ API والمصادقة من نفس أصل الواجهة: كوكيز first-party ولا CORS
+  async rewrites() {
+    const api = process.env.API_INTERNAL_URL ?? 'http://localhost:4000';
+    return [
+      { source: '/api/auth/:path*', destination: `${api}/api/auth/:path*` },
+      { source: '/api/v1/:path*', destination: `${api}/api/v1/:path*` },
+    ];
+  },
   async headers() {
     return [
       {

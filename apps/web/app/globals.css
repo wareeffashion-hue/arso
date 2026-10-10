@@ -388,3 +388,104 @@ tbody tr:last-child > * {
     transition: none !important;
   }
 }
+
+/* ===== صفحات الدخول ===== */
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6) var(--space-4);
+}
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  padding: var(--space-8);
+}
+.auth-logo {
+  display: block;
+  height: 64px;
+  width: auto;
+  margin: 0 auto var(--space-6);
+}
+.auth-title {
+  font-size: var(--fs-xl);
+  font-weight: var(--fw-bold);
+  text-align: center;
+}
+.auth-lead {
+  color: var(--text-secondary);
+  text-align: center;
+  margin: var(--space-2) 0 var(--space-6);
+  font-size: var(--fs-sm);
+}
+.auth-footer {
+  text-align: center;
+  margin-top: var(--space-5);
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+}
+.auth-footer a,
+.alert a {
+  color: var(--text-gold);
+  font-weight: var(--fw-medium);
+}
+.auth-tagline {
+  margin-top: var(--space-6);
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+}
+.form {
+  display: grid;
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+}
+.field {
+  display: grid;
+  gap: var(--space-1);
+}
+.field label {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+}
+.field input {
+  font: inherit;
+  min-height: 44px;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+}
+.field input:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 1px;
+  border-color: var(--focus-ring);
+}
+.field-hint {
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+}
+.btn-block {
+  width: 100%;
+}
+.btn[disabled] {
+  opacity: 0.6;
+  cursor: progress;
+}
+.alert {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  font-size: var(--fs-sm);
+  background: var(--bg-sunken);
+  margin: var(--space-3) 0;
+}
+.alert-error {
+  color: var(--status-danger);
+  background: var(--status-danger-bg);
+}
+.alert-ok {
+  color: var(--status-success);
+  background: var(--status-success-bg);
+}
