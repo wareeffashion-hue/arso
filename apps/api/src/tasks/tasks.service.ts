@@ -193,8 +193,9 @@ export class TasksService {
     }
   }
 
+  /** أي لمس للتكلفة (تحديدها أو مسحها بـ null) لمن يملك finance.read_summary فقط */
   private checkCost(store: StoreAccess, cost: string | null | undefined) {
-    if (cost === undefined || cost === null) return;
+    if (cost === undefined) return;
     if (!this.seesCost(store)) throw forbidden();
   }
 

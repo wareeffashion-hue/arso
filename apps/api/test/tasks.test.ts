@@ -167,6 +167,17 @@ describe('المهام (القسم 28)', () => {
       .post(`${base}/tasks`)
       .send({ title: 'إعلان جديد', costAmount: '500' })
       .expect(403);
+    // ولا يمسح تكلفة أدخلها المالك
+    const costed = await owner
+      .post(`${base}/tasks`)
+      .send({ title: 'تصوير', costAmount: '900' })
+      .expect(201);
+    await manager
+      .patch(`${base}/tasks/${costed.body.id}`)
+      .send({ revision: costed.body.revision, costAmount: null })
+      .expect(403);
+    const still = await owner.get(`${base}/tasks/${costed.body.id}`).expect(200);
+    expect(still.body.cost).toEqual({ amount: '900.00', currency: 'SAR' });
   });
 
   it('التعليقات للقارئ، والسجل يحفظها', async () => {
