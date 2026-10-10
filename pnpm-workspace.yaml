@@ -1,0 +1,12 @@
+packages:
+  - 'apps/*'
+  - 'packages/*'
+  - 'brand'
+
+# لا نثبّت أي إصدار عمره أقل من 14 يومًا (حماية سلسلة التوريد)
+minimumReleaseAge: 20160
+
+onlyBuiltDependencies:
+  - esbuild
+  - sharp
+  - '@nestjs/core'
