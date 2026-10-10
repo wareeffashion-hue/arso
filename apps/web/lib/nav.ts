@@ -45,7 +45,7 @@ export const NAV: readonly NavItem[] = [
     href: '/tasks',
     label: 'المهام',
     icon: 'M9 11l3 3 8-8M20 12v7a2 2 0 01-2 2H6a2 2 0 01-2-2V5a2 2 0 012-2h9',
-    available: false,
+    available: true,
   },
   {
     href: '/reports',

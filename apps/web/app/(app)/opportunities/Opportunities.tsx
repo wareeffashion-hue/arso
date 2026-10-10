@@ -332,6 +332,7 @@ function ProblemCard({
             </ul>
           </section>
           <ScoreBreakdown score={p.score} />
+          {p.canManage && p.open ? <ToTask problem={p} base={base} /> : null}
           {p.canManage ? (
             <Manage problem={p} base={base} onSaved={(np) => (setDetail(np), onChanged())} />
           ) : (
@@ -535,5 +536,47 @@ function Comments({
         </p>
       ) : null}
     </section>
+  );
+}
+
+/** تحويل البطاقة إلى مهمة بمسودة من الخطوة والملاحظة والفحوص؛ تُعدَّل لاحقًا في صفحة المهام */
+function ToTask({ problem, base }: { problem: Problem; base: string }) {
+  const [state, setState] = useState<'idle' | 'busy' | 'done' | 'error'>('idle');
+  const storeBase = base.replace(/\/problems$/, '');
+  async function create() {
+    setState('busy');
+    try {
+      const draft = await api<{ title: string; brief: string; problemId: string }>(
+        `${base}/${problem.id}/task-draft`,
+      );
+      await api(`${storeBase}/tasks`, { body: draft });
+      setState('done');
+    } catch {
+      setState('error');
+    }
+  }
+  return (
+    <div className="actions">
+      {state === 'done' ? (
+        <p className="alert alert-ok" role="status">
+          <span aria-hidden="true">✓ </span>
+          أُنشئت مهمة من هذه البطاقة. <Link href="/tasks">افتح المهام</Link>
+        </p>
+      ) : (
+        <button
+          type="button"
+          className="btn btn-primary"
+          disabled={state === 'busy'}
+          onClick={() => void create()}
+        >
+          {state === 'busy' ? 'لحظة…' : 'حوّل إلى مهمة'}
+        </button>
+      )}
+      {state === 'error' ? (
+        <p className="alert alert-error" role="alert">
+          تعذّر إنشاء المهمة. تحتاج صلاحية تحضير الإجراءات.
+        </p>
+      ) : null}
+    </div>
   );
 }
