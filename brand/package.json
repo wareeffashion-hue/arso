@@ -1,0 +1,12 @@
+{
+  "name": "@arso/brand",
+  "version": "1.0.0",
+  "private": true,
+  "description": "هوية أرسو: tokens والخطوط والشعارات ورمز الريال",
+  "exports": {
+    "./tokens.css": "./tokens.css",
+    "./logo/*": "./logo/*",
+    "./icons/*": "./icons/*",
+    "./fonts/*": "./fonts/*"
+  }
+}
