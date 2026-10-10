@@ -23,6 +23,14 @@ export interface Membership {
   status: 'active';
 }
 
+export interface StoreAccess {
+  id: string;
+  name: string;
+  timezone: string;
+  currency: string;
+  permissions: ReadonlySet<Permission>;
+}
+
 interface PgError {
   code?: string;
 }
@@ -107,6 +115,25 @@ export class OrgService {
     if (m.role === 'owner') return stores;
     const grants = await this.grantsFor(m.organizationId, m.id);
     return stores.filter((s) => effectivePermissions(m, s.id, grants).size > 0);
+  }
+
+  /**
+   * متجر محدد بصلاحية محددة عليه. متجر لا يراه العضو = 404 (لا نكشف وجوده)،
+   * ومتجر يراه بلا هذه الصلاحية = 403. يعيد الصلاحيات الفعلية لتنقية الرد (AC02).
+   */
+  async requireStore(m: Membership, storeId: string, permission: Permission): Promise<StoreAccess> {
+    const [store] = await withTenant(
+      this.sql,
+      m.organizationId,
+      (tx) => tx<{ id: string; name: string; timezone: string; currency: string }[]>`
+        SELECT id, name, timezone, currency FROM stores WHERE id = ${storeId}`,
+    );
+    if (!store) throw notFound();
+    const grants = m.role === 'owner' ? [] : await this.grantsFor(m.organizationId, m.id);
+    const permissions = effectivePermissions(m, store.id, grants);
+    if (permissions.size === 0) throw notFound();
+    if (!permissions.has(permission)) throw forbidden();
+    return { ...store, currency: store.currency.trim(), permissions };
   }
 
   async createStore(m: Membership, input: { name: string; timezone: string; currency: string }) {

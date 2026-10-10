@@ -53,6 +53,12 @@ export const NAV: readonly NavItem[] = [
     icon: 'M7 3h7l5 5v13H7zM14 3v5h5M10 13h6M10 17h6',
     available: false,
   },
+  {
+    href: '/imports',
+    label: 'استيراد البيانات',
+    icon: 'M12 3v12M7 10l5 5 5-5M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2',
+    available: true,
+  },
   { href: '/data-health', label: 'صحة البيانات', icon: 'M3 12h4l3-7 4 14 3-7h4', available: true },
   {
     href: '/settings',
