@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { DailyBars } from '@/components/DailyBars';
 import { EmptyState } from '@/components/EmptyState';
 import { KpiCard } from '@/components/KpiCard';
+import { TopOpportunities } from '@/components/TopOpportunities';
 import { api } from '@/lib/api';
 import { formatDecimal } from '@/lib/format';
 import { formatDateTime } from '@/lib/labels';
@@ -230,6 +231,10 @@ function Body({ sel, load }: { sel: Selection; load: Load }) {
           الإعلان.
         </p>
       </section>
+      <TopOpportunities
+        base={`/api/v1/organizations/${sel.org.id}/stores/${sel.store.id}/problems`}
+        href={withSelection('/opportunities', sel)}
+      />
     </>
   );
 }
