@@ -4,7 +4,8 @@ RUN corepack enable
 WORKDIR /repo
 # وجهة وكيل /api تُكتب في إعداد Next وقت البناء
 ARG API_INTERNAL_URL=http://api.railway.internal:4000
-ENV API_INTERNAL_URL=$API_INTERNAL_URL NEXT_TELEMETRY_DISABLED=1
+ARG PUBLIC_SITE_URL=https://arso.sa
+ENV API_INTERNAL_URL=$API_INTERNAL_URL PUBLIC_SITE_URL=$PUBLIC_SITE_URL NEXT_TELEMETRY_DISABLED=1
 COPY . .
 RUN pnpm install --frozen-lockfile
 RUN pnpm turbo run build --filter=@arso/web...

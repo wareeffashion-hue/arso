@@ -1112,3 +1112,8 @@ tbody tr:last-child > * {
   color: var(--text-secondary);
   line-height: var(--lh-arabic);
 }
+.auth-consent {
+  margin: 0 0 var(--space-3);
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+}

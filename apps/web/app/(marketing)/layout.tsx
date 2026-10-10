@@ -15,9 +15,9 @@ export default function MarketingLayout({ children }: { children: ReactNode }) {
             <span>أرسو</span>
           </Link>
           <nav className="mk-nav" aria-label="أقسام الصفحة">
-            <a href="#how">كيف يعمل</a>
-            <a href="#why">لماذا أرسو</a>
-            <a href="#faq">الأسئلة</a>
+            <a href="/#how">كيف يعمل</a>
+            <a href="/#why">لماذا أرسو</a>
+            <a href="/#faq">الأسئلة</a>
           </nav>
           <div className="mk-header-actions">
             <Link href="/sign-in" className="mk-link">
@@ -36,7 +36,13 @@ export default function MarketingLayout({ children }: { children: ReactNode }) {
             <img src="/ARSO_Logo_Dark.svg" alt="أرسو" width={84} height={80} />
             <p>نرسي نمو متجرك</p>
           </div>
-          <p className="mk-footer-note">منصة سعودية لربحية المتاجر الإلكترونية · © 2026 أرسو</p>
+          <div>
+            <nav className="mk-footer-links" aria-label="روابط قانونية">
+              <Link href="/privacy">سياسة الخصوصية</Link>
+              <Link href="/terms">شروط الاستخدام</Link>
+            </nav>
+            <p className="mk-footer-note">منصة سعودية لربحية المتاجر الإلكترونية · © 2026 أرسو</p>
+          </div>
         </div>
       </footer>
     </div>
