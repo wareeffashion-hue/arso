@@ -27,6 +27,10 @@ export default function SignUpPage() {
       }}
       footer={
         <>
+          <p className="auth-consent">
+            بإنشاء الحساب توافق على <Link href="/terms">شروط الاستخدام</Link> و
+            <Link href="/privacy">سياسة الخصوصية</Link>.
+          </p>
           لديك حساب؟ <Link href="/sign-in">سجّل الدخول</Link>
         </>
       }

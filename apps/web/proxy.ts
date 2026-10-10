@@ -21,6 +21,7 @@ export const config = {
     '/data-health/:path*',
     '/imports/:path*',
     '/opportunities/:path*',
+    '/tasks/:path*',
     '/settings/:path*',
     '/onboarding',
   ],
