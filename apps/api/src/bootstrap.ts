@@ -19,7 +19,7 @@ export async function createApp(config: AppConfig, opts: CreateAppOptions = {}) 
     opts.mailer ??
     (config.RESEND_API_KEY
       ? new ResendMailer(config.RESEND_API_KEY, config.EMAIL_FROM)
-      : config.NODE_ENV === 'development'
+      : config.NODE_ENV === 'development' || config.DEPLOY_ENV === 'staging'
         ? new ConsoleMailer()
         : new MemoryMailer());
   const authPool = new Pool({ connectionString: config.AUTH_DATABASE_URL, max: 5 });

@@ -1,9 +1,12 @@
+import path from 'node:path';
 import type { NextConfig } from 'next';
 
 const config: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   output: 'standalone',
+  // جذر المستودع، حتى يتتبع البناء المستقل حزم الـ workspace
+  outputFileTracingRoot: path.join(import.meta.dirname, '../..'),
   transpilePackages: ['@arso/domain'],
   // الـ API والمصادقة من نفس أصل الواجهة: كوكيز first-party ولا CORS
   async rewrites() {

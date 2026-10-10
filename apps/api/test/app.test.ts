@@ -71,6 +71,20 @@ describe('الإعدادات', () => {
   });
 });
 
+describe('بيئة الاختبار المنشورة (staging)', () => {
+  it('تقبل الإقلاع بلا مزود بريد، والإنتاج يرفضه', () => {
+    const base = {
+      NODE_ENV: 'production',
+      DATABASE_URL: 'postgres://a@b/c',
+      AUTH_DATABASE_URL: 'postgres://a@b/c',
+      BETTER_AUTH_SECRET: 'x'.repeat(40),
+      PUBLIC_WEB_URL: 'https://arso.example',
+    };
+    expect(loadConfig({ ...base, DEPLOY_ENV: 'staging' }).DEPLOY_ENV).toBe('staging');
+    expect(() => loadConfig(base)).toThrow(/RESEND_API_KEY/);
+  });
+});
+
 describe('قاعدة غير متاحة', () => {
   it('GET /health/ready يعيد 503 قابل لإعادة المحاولة', async () => {
     const { app } = await createApp(

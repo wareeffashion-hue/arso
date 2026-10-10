@@ -3,6 +3,8 @@ import { z } from 'zod';
 const schema = z
   .object({
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
+    /** staging: بيئة اختبار منشورة قد تعمل بلا مزود بريد (الرسائل تُكتب في سجلات الخادم الخاصة) */
+    DEPLOY_ENV: z.enum(['staging', 'production']).default('production'),
     PORT: z.coerce.number().int().min(1).max(65535).default(4000),
     /** دور arso_app: بيانات المؤسسات عبر RLS */
     DATABASE_URL: z.string().url(),
@@ -18,7 +20,7 @@ const schema = z
     AUTH_RATE_LIMIT: z.enum(['on', 'off']).optional(),
   })
   .superRefine((c, ctx) => {
-    if (c.NODE_ENV === 'production' && !c.RESEND_API_KEY) {
+    if (c.NODE_ENV === 'production' && c.DEPLOY_ENV === 'production' && !c.RESEND_API_KEY) {
       ctx.addIssue({ code: 'custom', path: ['RESEND_API_KEY'], message: 'مطلوب في الإنتاج' });
     }
     if (c.NODE_ENV === 'production' && !c.PUBLIC_WEB_URL.startsWith('https://')) {
